@@ -1,0 +1,9 @@
+name: 'Custom Timezone Configuration'
+type: module
+description: 'A custom module for configuring timezones.'
+package: Custom
+core_version_requirement: ^10 || ^11
+core_version: ^10
+dependencies:
+  - drupal:config
+  - drupal:core
