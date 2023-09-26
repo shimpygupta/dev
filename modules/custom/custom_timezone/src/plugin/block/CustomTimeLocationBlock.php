@@ -64,30 +64,6 @@ class CustomTimeLocationBlock extends BlockBase implements ContainerFactoryPlugi
       $container->get('config.factory')
     );
   }
-    /**
-   * {@inheritdoc}
-   */
-  public function getCacheTags() {
-    // Cache tags for the data your block depends on.
-    $cache_tags = [
-      'config:custom_timezone.settings', 
-    ];
-
-    return $cache_tags;
-  }
-   
-  /**
-   * {@inheritdoc}
-   */
-  public function getCacheContexts() {
-    // Add cache contexts for the conditions your block should vary by.
-    $cache_contexts = [
-      'timezone',
-    ];
-
-    return $cache_contexts;
-  }
-
   /**
    * {@inheritdoc}
    */
@@ -101,37 +77,50 @@ class CustomTimeLocationBlock extends BlockBase implements ContainerFactoryPlugi
     $timezone = $config->get('timezone');
     $current_time = $this->customTimeService->getCurrentTime($timezone);
     
-    $content1=[
+    // Define the cache tags.
+  $cache_tags = [
+    'config:custom_timezone.settings',
+  ];
+  print_r($cache_tags);
+  // Define the cache contexts.
+  $cache_contexts = [
+    'timezone',
+  ];
+  print_r($cache_contexts);
+    $content=[
         '#markup' => '<div class="custom-time" style="font-weight:bold;">' . 
         t('@formatted_time<br>@formatted_date', [
           '@formatted_date' => $current_time['formatted_date'],
           '@formatted_time' => $current_time['formatted_time'],
         ]),
-          // Add cache tags and contexts for dynamic caching.
-          $content1['#cache']['max-age'] = ['3600'],
-          $content1['#cache']['tags'] = ['custom_time_block:time'],
-          $content1['#cache']['contexts'] = ['timezone'],
-        '#cache' => [
-          'max-age' => 10, 
-          // 'cache_tags' => $cache_tags,
-          // 'cache_contexts' => $cache_contexts,
-        ],
-    ];
-     $content1['#markup'].= '<div style="current-location">Time in ' . $city. ','.$country. ' '.'</div>';
-     return $content1;
-
+        
+        // Add cache tags and contexts for dynamic caching.
+    '#cache' => [
+      'max-age' => 3600,
+      'tags' => $cache_tags,
+      'contexts' => $cache_contexts,
+    ],
+  ];
+     $content['#markup'].= '<div style="current-location">Time in ' . $city. ','.$country. ' '.'</div>';
+     return $content;
+     
      /// Define the variables to pass to the Twig template.
   $variables = [
     'city' => $city,
     'country' => $country,
+    'formatted_time' => $current_time['formatted_time'],
+    'formatted_date' => $current_time['formatted_date'],
   ];
-
+  
   // Build the render array with the theme hook and variables.
-  $content = [
+  $return = [
     '#theme' => 'custom_timezone_location_time_block',
     '#variables' => $variables,
+    '#cache' => [
+      'max-age' => 3600,
+      'tags' => $cache_tags,
+      'contexts' => $cache_contexts,
+    ],
   ];
-
-  return $content;
   }
 }

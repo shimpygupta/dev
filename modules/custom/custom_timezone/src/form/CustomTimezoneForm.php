@@ -84,10 +84,22 @@ class CustomTimezoneForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('custom_timezone.settings');
 
+    // Get the previous timezone value from the configuration.
+    $prev_timezone = $config->get('timezone');
+
     $config->set('country', $form_state->getValue('country'))
       ->set('city', $form_state->getValue('city'))
       ->set('timezone', $form_state->getValue('timezone'))
       ->save();
+
+    // Check if the timezone value has changed.
+     $new_timezone = $form_state->getValue('timezone');
+     if ($prev_timezone !== $new_timezone) {
+
+     // Invalidate cache tags associated with your block when the timezone changes.
+    \Drupal\Core\Cache\Cache::invalidateTags(['custom_timezone_settings']);
+  }
+
 
     parent::submitForm($form, $form_state);
   }

@@ -1,7 +1,17 @@
-
-<p>test twig</p>
-<div class="custom-time-block">
-  <p>Current Time: {{ current_time.formatted_time }}</p>
-  <p>Date: {{ current_time.formatted_date }}</p>
-  <p>Location: {{ city }}, {{ country }}</p>
-</div>
+{#
+  /**
+   * @file
+   * Twig template for the custom timezone location time block.
+   */
+  #}
+  
+  <div class="custom-time">
+    <div style="font-weight: bold;">
+      {{ formatted_time }}<br>
+      {{ formatted_date }}
+    </div>
+    <div class="current-location">
+      Time in {{ city }}, {{ country }}
+    </div>
+  </div>
+  
